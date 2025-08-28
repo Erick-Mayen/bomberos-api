@@ -2,16 +2,35 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
-  id: Int!
-  username: String!
-  email: String!
-  password: String!
-  name: String!
-  lastname: String!
-  profile_pic: String
-  is_active: Boolean
+type Rol {
+  id_rol: Int!
+  nombre_rol: String!
 }
+
+type Personal {
+  id_personal: Int!
+  nombres: String!
+  apellidos: String!
+}
+
+type User {
+  id_usuario: Int!
+  nombre_usuario: String!
+  contrasenia: String!
+  id_personal: Int!
+  id_rol: Int!
+  activo: Boolean!
+  usuario_creacion: Int
+  fecha_creacion: DateTime!
+  fecha_actualizacion: DateTime!
+  personal: Personal
+  rol: Rol!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type AuthResponse {
   access_token: String!
@@ -19,14 +38,36 @@ type AuthResponse {
 }
 
 type Query {
-  sayHello: String!
+  findAllUsers: [User!]!
+  findOneUser(id: Int!): User!
 }
 
 type Mutation {
   login(loginInput: LoginInput!): AuthResponse!
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+  removeUser(id: Int!): User!
 }
 
 input LoginInput {
-  email: String!
-  password: String!
+  nombre_usuario: String!
+  contrasenia: String!
+}
+
+input CreateUserInput {
+  nombre_usuario: String!
+  contrasenia: String!
+  id_personal: Float!
+  id_rol: Float!
+  usuario_creacion: Float!
+}
+
+input UpdateUserInput {
+  nombre_usuario: String
+  contrasenia: String
+  id_personal: Float
+  id_rol: Float
+  usuario_creacion: Float
+  id_usuario: Int!
+  activo: Boolean
 }

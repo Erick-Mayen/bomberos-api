@@ -3,44 +3,360 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model comment {
-  id         Int       @id @default(autoincrement())
-  content    String
-  user_id    Int
-  post_id    Int
-  created_at DateTime? @default(now()) @db.Timestamp(6)
-  updated_at DateTime? @default(now()) @db.Timestamp(6)
-  is_active  Boolean?  @default(true)
-  post       post      @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  user       user      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model acompaniante {
+  id_acompaniante     Int      @id @default(autoincrement())
+  nombre_acompaniante String   @db.VarChar(100)
+  parentesco          String   @db.VarChar(50)
+  id_paciente         Int
+  paciente            paciente @relation(fields: [id_paciente], references: [id_paciente], onUpdate: Restrict, map: "acompaniante_ibfk_1")
+
+  @@index([id_paciente], map: "id_paciente")
 }
 
-model post {
-  id         Int       @id @default(autoincrement())
-  content    String
-  user_id    Int
-  created_at DateTime? @default(now()) @db.Timestamp(6)
-  updated_at DateTime? @default(now()) @db.Timestamp(6)
-  is_active  Boolean?  @default(true)
-  comment    comment[]
-  user       user      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model categoria {
+  id_categoria Int          @id @default(autoincrement())
+  nombre       String       @db.VarChar(100)
+  descripcion  String?      @db.Text
+  inventario   inventario[]
 }
 
-model user {
-  id          Int       @id @default(autoincrement())
-  username    String    @unique @db.VarChar(50)
-  email       String    @unique @db.VarChar(255)
-  password    String    @db.VarChar(60)
-  name        String    @db.VarChar(50)
-  lastname    String    @db.VarChar(50)
-  profile_pic String?
-  created_at  DateTime? @default(now()) @db.Timestamp(6)
-  updated_at  DateTime? @default(now()) @db.Timestamp(6)
-  is_active   Boolean?  @default(true)
-  comment     comment[]
-  post        post[]
+model codigo_emergencia {
+  id_codigo         Int          @id @default(autoincrement())
+  codigo            String       @unique(map: "codigo") @db.VarChar(20)
+  nombre_emergencia String       @db.VarChar(100)
+  emergencia        emergencia[]
+}
+
+model emergencia {
+  id_emergencia                                    Int                    @id @default(autoincrement())
+  id_codigo                                        Int
+  id_turno                                         Int
+  fecha                                            DateTime?              @db.Date
+  forma_aviso                                      String?                @db.VarChar(100)
+  hora_salida                                      DateTime?              @db.Time(0)
+  hora_entrada                                     DateTime?              @db.Time(0)
+  id_paciente                                      Int
+  id_telefonista                                   Int
+  id_bombero_reporte                               Int
+  id_unidad                                        Int
+  id_piloto                                        Int
+  observaciones                                    String?                @db.Text
+  kilometraje_entrada                              Int?
+  kilometraje_salida                               Int?
+  kilometros_recorridos                            Int?
+  codigo_emergencia                                codigo_emergencia      @relation(fields: [id_codigo], references: [id_codigo], onUpdate: Restrict, map: "emergencia_ibfk_1")
+  turno                                            turno                  @relation(fields: [id_turno], references: [id_turno], onUpdate: Restrict, map: "emergencia_ibfk_2")
+  paciente                                         paciente               @relation(fields: [id_paciente], references: [id_paciente], onUpdate: Restrict, map: "emergencia_ibfk_3")
+  personal_emergencia_id_telefonistaTopersonal     personal               @relation("emergencia_id_telefonistaTopersonal", fields: [id_telefonista], references: [id_personal], onUpdate: Restrict, map: "emergencia_ibfk_4")
+  personal_emergencia_id_bombero_reporteTopersonal personal               @relation("emergencia_id_bombero_reporteTopersonal", fields: [id_bombero_reporte], references: [id_personal], onUpdate: Restrict, map: "emergencia_ibfk_5")
+  unidad                                           unidad                 @relation(fields: [id_unidad], references: [id_unidad], onUpdate: Restrict, map: "emergencia_ibfk_6")
+  personal_emergencia_id_pilotoTopersonal          personal               @relation("emergencia_id_pilotoTopersonal", fields: [id_piloto], references: [id_personal], onUpdate: Restrict, map: "emergencia_ibfk_7")
+  emergencia_asistente                             emergencia_asistente[]
+
+  @@index([id_codigo], map: "emergencia_ibfk_1")
+  @@index([id_bombero_reporte], map: "id_bombero_reporte")
+  @@index([id_paciente], map: "id_paciente")
+  @@index([id_piloto], map: "id_piloto")
+  @@index([id_telefonista], map: "id_telefonista")
+  @@index([id_turno], map: "id_turno")
+  @@index([id_unidad], map: "id_unidad")
+}
+
+model emergencia_asistente {
+  id_emergencia Int
+  id_personal   Int
+  emergencia    emergencia @relation(fields: [id_emergencia], references: [id_emergencia], onUpdate: Restrict, map: "emergencia_asistente_ibfk_1")
+  personal      personal   @relation(fields: [id_personal], references: [id_personal], onUpdate: Restrict, map: "emergencia_asistente_ibfk_2")
+
+  @@id([id_emergencia, id_personal])
+  @@index([id_personal], map: "id_personal")
+}
+
+model incendio {
+  id_incendio                                    Int                   @id @default(autoincrement())
+  tipo                                           incendio_tipo
+  estacion                                       String?               @db.VarChar(100)
+  codigo                                         String?               @db.VarChar(20)
+  id_turno                                       Int?
+  ubicacion                                      String?               @db.Text
+  proporcion                                     incendio_proporcion?
+  clase_fuego                                    incendio_clase_fuego?
+  hora_salida                                    DateTime?             @db.Time(0)
+  hora_entrada                                   DateTime?             @db.Time(0)
+  hora_efectiva                                  DateTime?             @db.Time(0)
+  id_jefe_servicio                               Int?
+  id_telefonista                                 Int?
+  id_bombero_reporte                             Int?
+  id_unidad                                      Int?
+  id_piloto                                      Int?
+  observaciones                                  String?               @db.Text
+  kilometraje_entrada                            Int?
+  kilometraje_salida                             Int?
+  kilometros_recorridos                          Int?
+  fecha                                          DateTime?             @db.Date
+  turno                                          turno?                @relation(fields: [id_turno], references: [id_turno], onDelete: Restrict, onUpdate: Restrict, map: "incendio_ibfk_1")
+  personal_incendio_id_jefe_servicioTopersonal   personal?             @relation("incendio_id_jefe_servicioTopersonal", fields: [id_jefe_servicio], references: [id_personal], onDelete: Restrict, onUpdate: Restrict, map: "incendio_ibfk_2")
+  personal_incendio_id_telefonistaTopersonal     personal?             @relation("incendio_id_telefonistaTopersonal", fields: [id_telefonista], references: [id_personal], onDelete: Restrict, onUpdate: Restrict, map: "incendio_ibfk_3")
+  personal_incendio_id_bombero_reporteTopersonal personal?             @relation("incendio_id_bombero_reporteTopersonal", fields: [id_bombero_reporte], references: [id_personal], onDelete: Restrict, onUpdate: Restrict, map: "incendio_ibfk_4")
+  unidad                                         unidad?               @relation(fields: [id_unidad], references: [id_unidad], onDelete: Restrict, onUpdate: Restrict, map: "incendio_ibfk_5")
+  personal_incendio_id_pilotoTopersonal          personal?             @relation("incendio_id_pilotoTopersonal", fields: [id_piloto], references: [id_personal], onDelete: Restrict, onUpdate: Restrict, map: "incendio_ibfk_6")
+  incendio_asistente                             incendio_asistente[]
+  incendio_estructural                           incendio_estructural?
+  incendio_forestal                              incendio_forestal?
+  incendio_vehicular                             incendio_vehicular?
+
+  @@index([id_bombero_reporte], map: "id_bombero_reporte")
+  @@index([id_jefe_servicio], map: "id_jefe_servicio")
+  @@index([id_piloto], map: "id_piloto")
+  @@index([id_telefonista], map: "id_telefonista")
+  @@index([id_turno], map: "id_turno")
+  @@index([id_unidad], map: "id_unidad")
+}
+
+model incendio_asistente {
+  id_incendio Int
+  id_personal Int
+  incendio    incendio @relation(fields: [id_incendio], references: [id_incendio], onUpdate: Restrict, map: "incendio_asistente_ibfk_1")
+  personal    personal @relation(fields: [id_personal], references: [id_personal], onUpdate: Restrict, map: "incendio_asistente_ibfk_2")
+
+  @@id([id_incendio, id_personal])
+  @@index([id_personal], map: "id_personal")
+}
+
+model incendio_estructural {
+  id_incendio Int      @id
+  inmueble    String?  @db.VarChar(255)
+  valor       Decimal? @db.Decimal(10, 2)
+  perdida     Decimal? @db.Decimal(10, 2)
+  incendio    incendio @relation(fields: [id_incendio], references: [id_incendio], onUpdate: Restrict, map: "incendio_estructural_ibfk_1")
+}
+
+model incendio_forestal {
+  id_incendio   Int      @id
+  area_afectada String?  @db.Text
+  tipo_terreno  String?  @db.VarChar(100)
+  incendio      incendio @relation(fields: [id_incendio], references: [id_incendio], onUpdate: Restrict, map: "incendio_forestal_ibfk_1")
+}
+
+model incendio_vehicular {
+  id_incendio   Int      @id
+  tipo_vehiculo String?  @db.VarChar(100)
+  placas        String?  @db.VarChar(50)
+  color         String?  @db.VarChar(50)
+  marca         String?  @db.VarChar(100)
+  valor         Decimal? @db.Decimal(10, 2)
+  perdida       Decimal? @db.Decimal(10, 2)
+  incendio      incendio @relation(fields: [id_incendio], references: [id_incendio], onUpdate: Restrict, map: "incendio_vehicular_ibfk_1")
+}
+
+model inventario {
+  id_item              Int                    @id @default(autoincrement())
+  nombre               String                 @db.VarChar(150)
+  descripcion          String?                @db.Text
+  cantidad             Int?                   @default(0)
+  unidad_medida        String?                @db.VarChar(50)
+  id_categoria         Int?
+  estado               String?                @default("Disponible") @db.VarChar(50)
+  fecha_registro       DateTime?              @db.Date
+  categoria            categoria?             @relation(fields: [id_categoria], references: [id_categoria], onDelete: Restrict, onUpdate: Restrict, map: "inventario_ibfk_1")
+  movimientoinventario movimientoinventario[]
+
+  @@index([id_categoria], map: "id_categoria")
+}
+
+model movimientoinventario {
+  id_movimiento   Int        @id @default(autoincrement())
+  id_item         Int
+  tipo_movimiento String     @db.VarChar(50)
+  cantidad        Int
+  motivo          String?    @db.Text
+  fecha           DateTime?  @default(now()) @db.DateTime(0)
+  realizado_por   Int?
+  inventario      inventario @relation(fields: [id_item], references: [id_item], onUpdate: Restrict, map: "movimientoinventario_ibfk_1")
+  personal        personal?  @relation(fields: [realizado_por], references: [id_personal], onDelete: Restrict, onUpdate: Restrict, map: "movimientoinventario_ibfk_2")
+
+  @@index([id_item], map: "id_item")
+  @@index([realizado_por], map: "realizado_por")
+}
+
+model paciente {
+  id_paciente        Int            @id @default(autoincrement())
+  nombre_paciente    String         @db.VarChar(100)
+  direccion_paciente String         @db.Text
+  edad               Int?
+  sexo               paciente_sexo
+  acompaniante       acompaniante[]
+  emergencia         emergencia[]
+}
+
+model personal {
+  id_personal                                                Int                       @id @default(autoincrement())
+  nombres                                                    String                    @db.VarChar(100)
+  apellidos                                                  String                    @db.VarChar(100)
+  emergencia_emergencia_id_telefonistaTopersonal             emergencia[]              @relation("emergencia_id_telefonistaTopersonal")
+  emergencia_emergencia_id_bombero_reporteTopersonal         emergencia[]              @relation("emergencia_id_bombero_reporteTopersonal")
+  emergencia_emergencia_id_pilotoTopersonal                  emergencia[]              @relation("emergencia_id_pilotoTopersonal")
+  emergencia_asistente                                       emergencia_asistente[]
+  incendio_incendio_id_jefe_servicioTopersonal               incendio[]                @relation("incendio_id_jefe_servicioTopersonal")
+  incendio_incendio_id_telefonistaTopersonal                 incendio[]                @relation("incendio_id_telefonistaTopersonal")
+  incendio_incendio_id_bombero_reporteTopersonal             incendio[]                @relation("incendio_id_bombero_reporteTopersonal")
+  incendio_incendio_id_pilotoTopersonal                      incendio[]                @relation("incendio_id_pilotoTopersonal")
+  incendio_asistente                                         incendio_asistente[]
+  movimientoinventario                                       movimientoinventario[]
+  personal_turno                                             personal_turno[]
+  servicio_vario_servicio_vario_id_jefe_servicioTopersonal   servicio_vario[]          @relation("servicio_vario_id_jefe_servicioTopersonal")
+  servicio_vario_servicio_vario_id_telefonistaTopersonal     servicio_vario[]          @relation("servicio_vario_id_telefonistaTopersonal")
+  servicio_vario_servicio_vario_id_bombero_reporteTopersonal servicio_vario[]          @relation("servicio_vario_id_bombero_reporteTopersonal")
+  servicio_vario_servicio_vario_id_pilotoTopersonal          servicio_vario[]          @relation("servicio_vario_id_pilotoTopersonal")
+  servicio_vario_servicio_vario_id_autorizado_porTopersonal  servicio_vario[]          @relation("servicio_vario_id_autorizado_porTopersonal")
+  serviciovario_asistente                                    serviciovario_asistente[]
+  usuario                                                    usuario[]
+}
+
+model personal_turno {
+  id_personal Int
+  id_turno    Int
+  fecha       DateTime @db.Date
+  personal    personal @relation(fields: [id_personal], references: [id_personal], onUpdate: Restrict, map: "personal_turno_ibfk_1")
+  turno       turno    @relation(fields: [id_turno], references: [id_turno], onUpdate: Restrict, map: "personal_turno_ibfk_2")
+
+  @@id([id_personal, id_turno, fecha])
+  @@index([id_turno], map: "id_turno")
+}
+
+model rol {
+  id_rol     Int       @id @default(autoincrement())
+  nombre_rol String    @db.VarChar(50)
+  usuario    usuario[]
+}
+
+model servicio_vario {
+  id_servicio                                          Int       @id @default(autoincrement())
+  id_codigo                                            Int
+  id_turno                                             Int
+  estacion                                             String?   @db.VarChar(100)
+  fecha                                                DateTime? @db.Date
+  dia_semana                                           String?   @db.VarChar(10)
+  direccion                                            String?   @db.Text
+  servicio_de                                          String?   @db.VarChar(100)
+  hora_salida                                          DateTime? @db.Time(0)
+  hora_entrada                                         DateTime? @db.Time(0)
+  id_jefe_servicio                                     Int
+  id_telefonista                                       Int
+  id_bombero_reporte                                   Int
+  id_unidad                                            Int
+  id_piloto                                            Int
+  id_autorizado_por                                    Int
+  observaciones                                        String?   @db.Text
+  kilometraje_entrada                                  Int?
+  kilometraje_salida                                   Int?
+  kilometros_recorridos                                Int?
+  turno                                                turno     @relation(fields: [id_turno], references: [id_turno], onUpdate: Restrict, map: "servicio_vario_ibfk_2")
+  personal_servicio_vario_id_jefe_servicioTopersonal   personal  @relation("servicio_vario_id_jefe_servicioTopersonal", fields: [id_jefe_servicio], references: [id_personal], onUpdate: Restrict, map: "servicio_vario_ibfk_3")
+  personal_servicio_vario_id_telefonistaTopersonal     personal  @relation("servicio_vario_id_telefonistaTopersonal", fields: [id_telefonista], references: [id_personal], onUpdate: Restrict, map: "servicio_vario_ibfk_4")
+  personal_servicio_vario_id_bombero_reporteTopersonal personal  @relation("servicio_vario_id_bombero_reporteTopersonal", fields: [id_bombero_reporte], references: [id_personal], onUpdate: Restrict, map: "servicio_vario_ibfk_5")
+  unidad                                               unidad    @relation(fields: [id_unidad], references: [id_unidad], onUpdate: Restrict, map: "servicio_vario_ibfk_6")
+  personal_servicio_vario_id_pilotoTopersonal          personal  @relation("servicio_vario_id_pilotoTopersonal", fields: [id_piloto], references: [id_personal], onUpdate: Restrict, map: "servicio_vario_ibfk_7")
+  personal_servicio_vario_id_autorizado_porTopersonal  personal  @relation("servicio_vario_id_autorizado_porTopersonal", fields: [id_autorizado_por], references: [id_personal], onUpdate: Restrict, map: "servicio_vario_ibfk_8")
+
+  @@index([id_autorizado_por], map: "id_autorizado_por")
+  @@index([id_bombero_reporte], map: "id_bombero_reporte")
+  @@index([id_codigo], map: "id_codigo")
+  @@index([id_jefe_servicio], map: "id_jefe_servicio")
+  @@index([id_piloto], map: "id_piloto")
+  @@index([id_telefonista], map: "id_telefonista")
+  @@index([id_turno], map: "id_turno")
+  @@index([id_unidad], map: "id_unidad")
+}
+
+model serviciovario_asistente {
+  id_servicio Int
+  id_personal Int
+  personal    personal @relation(fields: [id_personal], references: [id_personal], onUpdate: Restrict, map: "serviciovario_asistente_ibfk_2")
+
+  @@id([id_servicio, id_personal])
+  @@index([id_personal], map: "id_personal")
+}
+
+model turno {
+  id_turno       Int              @id @default(autoincrement())
+  nombre_turno   String           @db.VarChar(50)
+  emergencia     emergencia[]
+  incendio       incendio[]
+  personal_turno personal_turno[]
+  servicio_vario servicio_vario[]
+  turno_dia      turno_dia[]
+}
+
+model turno_dia {
+  id_turno       Int
+  dia_semana     String                   @db.VarChar(10)
+  duracion_horas turno_dia_duracion_horas
+  turno          turno                    @relation(fields: [id_turno], references: [id_turno], onUpdate: Restrict, map: "turno_dia_ibfk_1")
+
+  @@id([id_turno, dia_semana])
+}
+
+model unidad {
+  id_unidad      Int              @id @default(autoincrement())
+  placa          String           @unique(map: "placa") @db.VarChar(20)
+  modelo         String           @db.VarChar(50)
+  tipo_vehiculo  String           @db.VarChar(50)
+  descripcion    String?          @db.Text
+  emergencia     emergencia[]
+  incendio       incendio[]
+  servicio_vario servicio_vario[]
+}
+
+model usuario {
+  id_usuario          Int       @id @default(autoincrement())
+  nombre_usuario      String    @unique(map: "nombre_usuario") @db.VarChar(15)
+  contrasenia         String    @db.VarChar(255)
+  id_personal         Int
+  id_rol              Int
+  activo              Boolean   @default(true)
+  fecha_creacion      DateTime  @default(now()) @db.DateTime(0)
+  fecha_actualizacion DateTime  @default(now()) @db.DateTime(0)
+  usuario_creacion    Int?
+  usuario             usuario?  @relation("usuarioTousuario", fields: [usuario_creacion], references: [id_usuario], onDelete: Restrict, onUpdate: Restrict, map: "fk_usuario_creacion")
+  other_usuario       usuario[] @relation("usuarioTousuario")
+  personal            personal  @relation(fields: [id_personal], references: [id_personal], onUpdate: Restrict, map: "usuario_ibfk_1")
+  rol                 rol       @relation(fields: [id_rol], references: [id_rol], onUpdate: Restrict, map: "usuario_ibfk_2")
+
+  @@index([usuario_creacion], map: "fk_usuario_creacion")
+  @@index([id_personal], map: "id_personal")
+  @@index([id_rol], map: "id_rol")
+}
+
+enum incendio_tipo {
+  estructural
+  forestal
+  vehicular
+}
+
+enum turno_dia_duracion_horas {
+  H24 @map("24")
+  H48 @map("48")
+}
+
+enum paciente_sexo {
+  M
+  F
+}
+
+enum incendio_proporcion {
+  Declarado
+  Medio
+  Conato
+}
+
+enum incendio_clase_fuego {
+  A
+  B
+  C
+  D
 }

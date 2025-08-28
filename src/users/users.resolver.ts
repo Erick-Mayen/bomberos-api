@@ -1,0 +1,39 @@
+import { Resolver, Query, Args, Int, Mutation } from '@nestjs/graphql';
+import { UsersService } from './users.service';
+import { User } from './dto/entities/user.entity';
+import { CreateUserInput } from './dto/inputs/create-user.input';
+import { UpdateUserInput } from './dto/inputs/update-user.input';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
+
+@Resolver(() => User)
+export class UsersResolver {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Query(() => [User])
+  @UseGuards(GqlAuthGuard)
+  findAllUsers() {
+    return this.usersService.findAll();
+  }
+
+  @Query(() => User)
+  @UseGuards(GqlAuthGuard)
+  findOneUser(@Args('id', { type: () => Int }) id: number) {
+    return this.usersService.findOne(id);
+  }
+
+  @Mutation(() => User)
+createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
+  return this.usersService.create(createUserInput);
+}
+
+@Mutation(() => User)
+updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
+  return this.usersService.update(updateUserInput.id_usuario, updateUserInput);
+}
+
+@Mutation(() => User)
+removeUser(@Args('id', { type: () => Int }) id: number) {
+  return this.usersService.remove(id);
+}
+}
