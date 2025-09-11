@@ -11,7 +11,7 @@ export class UsersService {
   async findAll() {
     return this.prisma.usuario.findMany({
       include: {
-        personal: true,
+        personalAsignado: true,
         rol: true,
       },
     });
@@ -20,7 +20,7 @@ export class UsersService {
   async findOne(id: number) {
     return this.prisma.usuario.findUnique({
       where: { id_usuario: id },
-      include: { personal: true, rol: true },
+      include: { personalAsignado: true, rol: true },
     });
   }
 
@@ -43,7 +43,7 @@ export class UsersService {
     if (data.contrasenia) {
       updatedData.contrasenia = await bcrypt.hash(data.contrasenia, 10);
     }
-    return console.log("update");
+    return console.log('update');
 
     // return this.prisma.usuario.update({
     //   where: { id_usuario: id },

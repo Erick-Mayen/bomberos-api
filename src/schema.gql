@@ -7,30 +7,43 @@ type Rol {
   nombre_rol: String!
 }
 
-type Personal {
-  id_personal: Int!
-  nombres: String!
-  apellidos: String!
+type TipoPersonal {
+  id_tipo_personal: Int!
+  nombre: String!
 }
 
-type User {
-  id_usuario: Int!
-  nombre_usuario: String!
-  contrasenia: String!
+type Personal {
   id_personal: Int!
-  id_rol: Int!
+  primer_nombre: String!
+  segundo_nombre: String
+  primer_apellido: String!
+  segundo_apellido: String
   activo: Boolean!
-  usuario_creacion: Int
   fecha_creacion: DateTime!
   fecha_actualizacion: DateTime!
-  personal: Personal
-  rol: Rol!
+  usuario_creacion: Int!
+  id_tipo_personal: Int!
+  tipo_personal: TipoPersonal!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type User {
+  id_usuario: Int!
+  nombre_usuario: String!
+  contrasenia: String!
+  id_personal: Int
+  id_rol: Int!
+  activo: Boolean!
+  usuario_creacion: Int
+  fecha_creacion: DateTime!
+  fecha_actualizacion: DateTime!
+  personalAsignado: Personal
+  rol: Rol!
+}
 
 type AuthResponse {
   access_token: String!
@@ -57,17 +70,17 @@ input LoginInput {
 input CreateUserInput {
   nombre_usuario: String!
   contrasenia: String!
-  id_personal: Float!
-  id_rol: Float!
-  usuario_creacion: Float!
+  id_personal: Int
+  id_rol: Int!
+  usuario_creacion: Int!
 }
 
 input UpdateUserInput {
   nombre_usuario: String
   contrasenia: String
-  id_personal: Float
-  id_rol: Float
-  usuario_creacion: Float
+  id_personal: Int
+  id_rol: Int
+  usuario_creacion: Int
   id_usuario: Int!
   activo: Boolean
 }

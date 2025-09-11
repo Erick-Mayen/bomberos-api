@@ -16,17 +16,28 @@ export class AuthService {
     const user = await this.prisma.usuario.findUnique({
       where: { nombre_usuario: loginInput.nombre_usuario },
       include: {
-        personal: true,
         rol: true,
+        personalAsignado: {
+          include: {
+            tipo_personal: true,
+          },
+        },
       },
     });
 
-    if (!user) throw new UnauthorizedException('Credenciales incorrectas');
+    if (!user) throw new UnauthorizedException('LOGIN_FALLIDO');
+
+    if (!user.activo) throw new UnauthorizedException('USUARIO_INACTIVO');
 
     const valid = await bcrypt.compare(loginInput.contrasenia, user.contrasenia);
-    if (!valid) throw new UnauthorizedException('Credenciales incorrectas');
+    if (!valid) throw new UnauthorizedException('LOGIN_FALLIDO');
 
-    const payload = { sub: user.id_personal, usuario: user.nombre_usuario, rol: user.rol.nombre_rol };
+
+    const payload = {
+      sub: user.id_personal,
+      usuario: user.nombre_usuario,
+      rol: user.rol.nombre_rol,
+    };
 
     const token = this.jwtService.sign(payload);
 

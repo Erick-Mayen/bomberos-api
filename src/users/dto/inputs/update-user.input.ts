@@ -6,6 +6,6 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {
   @Field(() => Int)
   id_usuario: number;
 
-  @Field(() => Boolean, {nullable : true})
+  @Field(() => Boolean, { nullable: true })
   activo: boolean;
 }
