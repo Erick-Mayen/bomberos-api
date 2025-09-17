@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { User } from '../../users/dto/entities/user.entity';
+import { User } from '../../users/dto/models/user.model';
 
 @ObjectType()
 export class AuthResponse {

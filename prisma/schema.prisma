@@ -7,52 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model acompaniante {
-  id_acompaniante     Int      @id @default(autoincrement())
-  nombre_acompaniante String   @db.VarChar(100)
-  parentesco          String   @db.VarChar(50)
-  id_paciente         Int
-  paciente            paciente @relation(fields: [id_paciente], references: [id_paciente], onUpdate: Restrict, map: "acompaniante_ibfk_1")
-
-  @@index([id_paciente], map: "id_paciente")
-}
-
-model categoria {
-  id_categoria Int          @id @default(autoincrement())
-  nombre       String       @db.VarChar(100)
-  descripcion  String?      @db.Text
-  inventario   inventario[]
-}
-
-model codigo_emergencia {
-  id_codigo         Int    @id @default(autoincrement())
-  codigo            String @unique(map: "codigo") @db.VarChar(20)
-  nombre_emergencia String @db.VarChar(100)
-}
-
-model inventario {
-  id_item        Int        @id @default(autoincrement())
-  nombre         String     @db.VarChar(150)
-  descripcion    String?    @db.Text
-  cantidad       Int?       @default(0)
-  unidad_medida  String?    @db.VarChar(50)
-  id_categoria   Int?
-  estado         String?    @default("Disponible") @db.VarChar(50)
-  fecha_registro DateTime?  @db.Date
-  categoria      categoria? @relation(fields: [id_categoria], references: [id_categoria], onDelete: Restrict, onUpdate: Restrict, map: "inventario_ibfk_1")
-
-  @@index([id_categoria], map: "id_categoria")
-}
-
-model paciente {
-  id_paciente        Int            @id @default(autoincrement())
-  nombre_paciente    String         @db.VarChar(100)
-  direccion_paciente String         @db.Text
-  edad               Int?
-  sexo               paciente_sexo
-  acompaniante       acompaniante[]
-}
-
 model personal {
   id_personal         Int           @id @default(autoincrement())
   primer_nombre       String        @db.VarChar(50)
@@ -84,19 +38,6 @@ model tipo_personal {
   personal         personal[]
 }
 
-model turno {
-  id_turno     Int    @id @default(autoincrement())
-  nombre_turno String @db.VarChar(50)
-}
-
-model unidad {
-  id_unidad     Int     @id @default(autoincrement())
-  placa         String  @unique(map: "placa") @db.VarChar(20)
-  modelo        String  @db.VarChar(50)
-  tipo_vehiculo String  @db.VarChar(50)
-  descripcion   String? @db.Text
-}
-
 model usuario {
   id_usuario          Int        @id @default(autoincrement())
   nombre_usuario      String     @unique(map: "nombre_usuario") @db.VarChar(15)
@@ -116,9 +57,4 @@ model usuario {
   @@index([id_personal], map: "id_personal")
   @@index([id_rol], map: "id_rol")
   @@index([usuario_creacion], map: "usuario_creacion")
-}
-
-enum paciente_sexo {
-  M
-  F
 }

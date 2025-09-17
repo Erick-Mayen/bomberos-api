@@ -1,5 +1,5 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { TipoPersonal } from './tipoPersonal.entity';
+import { TipoPersonal } from './tipoPersonal.model';
 
 @ObjectType()
 export class Personal {
@@ -18,7 +18,7 @@ export class Personal {
   @Field(() => String, { nullable: true })
   segundo_apellido: string | null;
 
-  @Field()
+  @Field({ defaultValue: true })
   activo: boolean;
 
   @Field()

@@ -1,6 +1,6 @@
 import { Resolver, Query, Args, Int, Mutation } from '@nestjs/graphql';
 import { UsersService } from './users.service';
-import { User } from './dto/entities/user.entity';
+import { User } from './dto/models/user.model';
 import { CreateUserInput } from './dto/inputs/create-user.input';
 import { UpdateUserInput } from './dto/inputs/update-user.input';
 import { UseGuards } from '@nestjs/common';
@@ -23,11 +23,13 @@ export class UsersResolver {
   }
 
   @Mutation(() => User)
+  @UseGuards(GqlAuthGuard)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return this.usersService.create(createUserInput);
   }
 
   @Mutation(() => User)
+  @UseGuards(GqlAuthGuard)
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.usersService.update(
       updateUserInput.id_usuario,
@@ -36,6 +38,7 @@ export class UsersResolver {
   }
 
   @Mutation(() => User)
+  @UseGuards(GqlAuthGuard)
   removeUser(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.remove(id);
   }

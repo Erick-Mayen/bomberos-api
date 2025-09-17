@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Rol } from './rol.entity';
-import { Personal } from './personal.entity';
+import { Rol } from './rol.model';
+import { Personal } from '../../../personal/dto/models/personal.model';
 
 @ObjectType()
 export class User {
