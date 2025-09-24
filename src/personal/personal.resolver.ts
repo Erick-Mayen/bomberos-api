@@ -5,6 +5,7 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
 import { CreatePersonalInput } from './dto/inputs/create-personal.input';
 import { UpdatePersonalInput } from './dto/inputs/update-personal.input';
+import { TipoPersonal } from './dto/models/tipoPersonal.model';
 
 @Resolver(() => Personal)
 export class PersonalResolver {
@@ -41,5 +42,11 @@ export class PersonalResolver {
     @UseGuards(GqlAuthGuard)
     removePerson(@Args('id', { type: () => Int }) id: number) {
         return this.personalService.remove(id);
+    }
+
+    @Query(() => [TipoPersonal])
+    @UseGuards(GqlAuthGuard)
+    findAllTypes() {
+        return this.personalService.findAllTypes();
     }
 }

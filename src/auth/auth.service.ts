@@ -32,7 +32,6 @@ export class AuthService {
     const valid = await bcrypt.compare(loginInput.contrasenia, user.contrasenia);
     if (!valid) throw new UnauthorizedException('LOGIN_FALLIDO');
 
-
     const payload = {
       sub: user.id_personal,
       usuario: user.nombre_usuario,

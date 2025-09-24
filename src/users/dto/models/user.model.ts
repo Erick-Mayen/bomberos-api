@@ -22,6 +22,9 @@ export class User {
   @Field({ defaultValue: true })
   activo: boolean;
 
+  @Field({ defaultValue: true })
+  validar?: boolean;
+  
   @Field(() => Int, { nullable: true })
   usuario_creacion: number | null;
 

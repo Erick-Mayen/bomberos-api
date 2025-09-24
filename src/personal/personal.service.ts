@@ -45,6 +45,10 @@ export class PersonalService {
     });
   }
 
+  async findAllTypes() {
+    return this.prisma.tipo_personal.findMany();
+  }
+
   private async validatePersonalExists(id: number) {
     const personal = await this.prisma.personal.findUnique({
       where: { id_personal: id },

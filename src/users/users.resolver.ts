@@ -5,10 +5,11 @@ import { CreateUserInput } from './dto/inputs/create-user.input';
 import { UpdateUserInput } from './dto/inputs/update-user.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/gql-auth.guard';
+import { Rol } from './dto/models/rol.model';
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Query(() => [User])
   @UseGuards(GqlAuthGuard)
@@ -20,6 +21,12 @@ export class UsersResolver {
   @UseGuards(GqlAuthGuard)
   findOneUser(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.findOne(id);
+  }
+
+  @Query(() => [Rol])
+  @UseGuards(GqlAuthGuard)
+  findAllRoles() {
+    return this.usersService.findAllRoles();
   }
 
   @Mutation(() => User)

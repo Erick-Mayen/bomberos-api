@@ -38,6 +38,7 @@ type User {
   id_personal: Int
   id_rol: Int!
   activo: Boolean!
+  validar: Boolean!
   usuario_creacion: Int
   fecha_creacion: DateTime!
   fecha_actualizacion: DateTime!
@@ -53,8 +54,10 @@ type AuthResponse {
 type Query {
   findAllUsers: [User!]!
   findOneUser(id: Int!): User!
+  findAllRoles: [Rol!]!
   findAllPersonal: [Personal!]!
   findOnePerson(id: Int!): Personal!
+  findAllTypes: [TipoPersonal!]!
 }
 
 type Mutation {

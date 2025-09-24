@@ -64,6 +64,10 @@ export class UsersService {
     });
   }
 
+  async findAllRoles() {
+      return this.prisma.rol.findMany();
+    }
+
   private async validateUserExists(id: number) {
   const user = await this.prisma.usuario.findUnique({ where: { id_usuario: id } });
   if (!user) {
