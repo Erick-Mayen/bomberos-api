@@ -8,4 +8,8 @@ export class UpdateUserInput extends PartialType(CreateUserInput) {
 
   @Field(() => Boolean, { nullable: true })
   activo: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  validar: boolean;
+
 }

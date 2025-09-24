@@ -1,9 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginInput } from './dto/login.input';
 import { AuthResponse } from './dto/auth-response';
+import { ChangePasswordInput } from './dto/change-password.input';
 
 @Injectable()
 export class AuthService {
@@ -44,5 +45,37 @@ export class AuthService {
       access_token: token,
       user,
     };
+  }
+
+  async changePassword(input: ChangePasswordInput): Promise<boolean> {
+    const { id_usuario, actualPassword, newPassword } = input;
+
+    const user = await this.prisma.usuario.findUnique({
+      where: { id_usuario },
+    });
+
+    if (!user) {
+      throw new NotFoundException('USUARIO_NO_ENCONTRADO');
+    }
+
+    // Verificar contraseña actual
+    const valid = await bcrypt.compare(actualPassword, user.contrasenia);
+    if (!valid) {
+      throw new UnauthorizedException('INVALID_PASSWORD');
+    }
+
+    // Generar hash de la nueva contraseña
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Actualizar en BD
+    await this.prisma.usuario.update({
+      where: { id_usuario },
+      data: {
+        contrasenia: hashedPassword,
+        validar: false
+      },
+    });
+
+    return true;
   }
 }

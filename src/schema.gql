@@ -62,6 +62,7 @@ type Query {
 
 type Mutation {
   login(loginInput: LoginInput!): AuthResponse!
+  changePassword(changePasswordInput: ChangePasswordInput!): Boolean!
   createUser(createUserInput: CreateUserInput!): User!
   updateUser(updateUserInput: UpdateUserInput!): User!
   removeUser(id: Int!): User!
@@ -73,6 +74,12 @@ type Mutation {
 input LoginInput {
   nombre_usuario: String!
   contrasenia: String!
+}
+
+input ChangePasswordInput {
+  id_usuario: Int!
+  actualPassword: String!
+  newPassword: String!
 }
 
 input CreateUserInput {
@@ -91,6 +98,7 @@ input UpdateUserInput {
   usuario_creacion: Int
   id_usuario: Int!
   activo: Boolean
+  validar: Boolean
 }
 
 input CreatePersonalInput {
