@@ -50,6 +50,7 @@ model usuario {
   usuario_creacion    Int?
   validar             Boolean    @default(true)
   personalCreado      personal[] @relation("personalCreadoPorUsuario")
+  unidad              unidad[]
   usuario             usuario?   @relation("usuarioTousuario", fields: [usuario_creacion], references: [id_usuario], onDelete: Restrict, onUpdate: Restrict, map: "usuario_ibfk_3")
   other_usuario       usuario[]  @relation("usuarioTousuario")
   personalAsignado    personal?  @relation("usuarioAsignado", fields: [id_personal], references: [id_personal], onDelete: Restrict, onUpdate: Restrict, map: "usuario_ibfk_1")
@@ -58,4 +59,28 @@ model usuario {
   @@index([id_personal], map: "id_personal")
   @@index([id_rol], map: "id_rol")
   @@index([usuario_creacion], map: "fk_usuario_creacion")
+}
+
+model tipo_vehiculo {
+  id_tipo_vehiculo Int      @id @default(autoincrement())
+  nombre           String   @unique(map: "nombre") @db.VarChar(50)
+  unidad           unidad[]
+}
+
+model unidad {
+  id_unidad           Int           @id @default(autoincrement())
+  unidad              String        @unique(map: "unidad") @db.VarChar(20)
+  modelo              String        @db.VarChar(10)
+  id_tipo_vehiculo    Int
+  descripcion         String?       @db.Text
+  kilometraje         Int?
+  activo              Boolean       @default(true)
+  fecha_creacion      DateTime      @default(now()) @db.DateTime(0)
+  fecha_actualizacion DateTime      @default(now()) @db.DateTime(0)
+  usuario_creacion    Int?
+  tipo_vehiculo       tipo_vehiculo @relation(fields: [id_tipo_vehiculo], references: [id_tipo_vehiculo], onUpdate: Restrict, map: "fk_unidad_tipo")
+  usuario             usuario?      @relation(fields: [usuario_creacion], references: [id_usuario], onDelete: Restrict, onUpdate: Restrict, map: "fk_unidad_usuario")
+
+  @@index([id_tipo_vehiculo], map: "fk_unidad_tipo")
+  @@index([usuario_creacion], map: "fk_unidad_usuario")
 }
