@@ -9,7 +9,8 @@ export class VehiclesService {
 
   async findAll() {
     return this.prisma.unidad.findMany({
-      include: { tipo_vehiculo: true }, 
+      include: { tipo_vehiculo: true, estado_unidad: true }, 
+      orderBy: { fecha_creacion: 'asc' },
     });
   }
 
@@ -17,7 +18,7 @@ export class VehiclesService {
     await this.validateVehicleExists(id);
     return this.prisma.unidad.findUnique({
       where: { id_unidad: id },
-      include: { tipo_vehiculo: true },
+      include: { tipo_vehiculo: true, estado_unidad: true },
     });
   }
 
@@ -51,6 +52,13 @@ export class VehiclesService {
     return this.prisma.tipo_vehiculo.findMany();
   }
 
+  async findAllStates() {
+  return this.prisma.estado_unidad.findMany({
+    orderBy: {
+      id_estado: 'asc',
+    },
+  });
+}
 
   private async validateVehicleExists(id: number) {
     const vehicle = await this.prisma.unidad.findUnique({ where: { id_unidad: id } });

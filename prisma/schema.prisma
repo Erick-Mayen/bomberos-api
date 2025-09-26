@@ -72,15 +72,24 @@ model unidad {
   unidad              String        @unique(map: "unidad") @db.VarChar(20)
   modelo              String        @db.VarChar(10)
   id_tipo_vehiculo    Int
+  id_estado_unidad    Int
   descripcion         String?       @db.Text
   kilometraje         Int?
   activo              Boolean       @default(true)
   fecha_creacion      DateTime      @default(now()) @db.DateTime(0)
   fecha_actualizacion DateTime      @default(now()) @db.DateTime(0)
   usuario_creacion    Int?
+  estado_unidad       estado_unidad @relation(fields: [id_estado_unidad], references: [id_estado], onUpdate: Restrict, map: "fk_unidad_estado")
   tipo_vehiculo       tipo_vehiculo @relation(fields: [id_tipo_vehiculo], references: [id_tipo_vehiculo], onUpdate: Restrict, map: "fk_unidad_tipo")
   usuario             usuario?      @relation(fields: [usuario_creacion], references: [id_usuario], onDelete: Restrict, onUpdate: Restrict, map: "fk_unidad_usuario")
 
   @@index([id_tipo_vehiculo], map: "fk_unidad_tipo")
   @@index([usuario_creacion], map: "fk_unidad_usuario")
+  @@index([id_estado_unidad], map: "fk_unidad_estado")
+}
+
+model estado_unidad {
+  id_estado Int      @id @default(autoincrement())
+  nombre    String   @unique(map: "nombre") @db.VarChar(50)
+  unidad    unidad[]
 }

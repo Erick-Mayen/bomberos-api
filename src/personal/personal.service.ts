@@ -10,6 +10,7 @@ export class PersonalService {
   async findAll() {
     return this.prisma.personal.findMany({
       include: { tipo_personal: true },
+      orderBy: { fecha_creacion: 'asc' },
     });
   }
 

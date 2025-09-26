@@ -1,5 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { VehicleType } from './vehicleType.model';
+import { VehicleState } from './vehicleState.model';
 
 @ObjectType()
 export class Vehicle {
@@ -17,6 +18,12 @@ export class Vehicle {
 
   @Field(() => VehicleType)
   tipo_vehiculo: VehicleType;
+
+  @Field(() => Int)
+  id_estado_unidad: number;
+
+  @Field(() => VehicleState)
+  estado_unidad: VehicleState;
 
   @Field(() => String, { nullable: true })
   descripcion: string | null;

@@ -6,6 +6,7 @@ import { Vehicle } from './dto/models/vehicle.model';
 import { VehicleType } from './dto/models/vehicleType.model';
 import { CreateVehicleInput } from './dto/inputs/create-vehicle.input';
 import { UpdateVehicleInput } from './dto/inputs/update-vehicle.input';
+import { VehicleState } from './dto/models/vehicleState.model';
 
 @Resolver(() => Vehicle)
 export class VehiclesResolver {
@@ -48,5 +49,11 @@ export class VehiclesResolver {
   @UseGuards(GqlAuthGuard)
   findAllVehicleTypes() {
     return this.vehiclesService.findAllTypes();
+  }
+  
+  @Query(() => [VehicleState])
+  @UseGuards(GqlAuthGuard)
+  findAllVehicleStates() {
+    return this.vehiclesService.findAllStates();
   }
 }

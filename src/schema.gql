@@ -51,6 +51,32 @@ type AuthResponse {
   user: User!
 }
 
+type VehicleType {
+  id_tipo_vehiculo: Int!
+  nombre: String!
+}
+
+type VehicleState {
+  id_estado: Int!
+  nombre: String!
+}
+
+type Vehicle {
+  id_unidad: Int!
+  unidad: String!
+  modelo: String!
+  id_tipo_vehiculo: Int!
+  tipo_vehiculo: VehicleType!
+  id_estado_unidad: Int!
+  estado_unidad: VehicleState!
+  descripcion: String
+  kilometraje: Int
+  activo: Boolean!
+  fecha_creacion: DateTime!
+  fecha_actualizacion: DateTime!
+  usuario_creacion: Int
+}
+
 type Query {
   findAllUsers: [User!]!
   findOneUser(id: Int!): User!
@@ -58,6 +84,10 @@ type Query {
   findAllPersonal: [Personal!]!
   findOnePerson(id: Int!): Personal!
   findAllTypes: [TipoPersonal!]!
+  findAllVehicles: [Vehicle!]!
+  findOneVehicle(id: Int!): Vehicle!
+  findAllVehicleTypes: [VehicleType!]!
+  findAllVehicleStates: [VehicleState!]!
 }
 
 type Mutation {
@@ -69,6 +99,9 @@ type Mutation {
   createPerson(CreatePersonalInput: CreatePersonalInput!): Personal!
   updatePerson(updatePersonalInput: UpdatePersonalInput!): Personal!
   removePerson(id: Int!): Personal!
+  createVehicle(createVehicleInput: CreateVehicleInput!): Vehicle!
+  updateVehicle(updateVehicleInput: UpdateVehicleInput!): Vehicle!
+  removeVehicle(id: Int!): Vehicle!
 }
 
 input LoginInput {
@@ -118,5 +151,27 @@ input UpdatePersonalInput {
   id_tipo_personal: Int
   usuario_creacion: Int
   id_personal: Int!
+  activo: Boolean
+}
+
+input CreateVehicleInput {
+  unidad: String!
+  modelo: String!
+  id_tipo_vehiculo: Int!
+  id_estado_unidad: Int!
+  descripcion: String
+  kilometraje: Int
+  usuario_creacion: Int!
+}
+
+input UpdateVehicleInput {
+  unidad: String
+  modelo: String
+  id_tipo_vehiculo: Int
+  id_estado_unidad: Int
+  descripcion: String
+  kilometraje: Int
+  usuario_creacion: Int
+  id_unidad: Int!
   activo: Boolean
 }

@@ -11,6 +11,7 @@ export class UsersService {
   async findAll() {
     return this.prisma.usuario.findMany({
       include: { personalAsignado: true, rol: true },
+      orderBy: { fecha_creacion: 'asc' },
     });
   }
 

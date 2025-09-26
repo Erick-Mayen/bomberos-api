@@ -10,5 +10,8 @@ export class UpdateVehicleInput extends PartialType(CreateVehicleInput) {
     activo: boolean;
 
     @Field(() => Int, { nullable: true })
+    id_estado_unidad: number;
+    
+    @Field(() => Int, { nullable: true })
     kilometraje?: number;
 }

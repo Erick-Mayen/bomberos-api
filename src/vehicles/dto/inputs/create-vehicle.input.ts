@@ -11,6 +11,9 @@ export class CreateVehicleInput {
   @Field(() => Int)
   id_tipo_vehiculo: number;
 
+  @Field(() => Int)
+  id_estado_unidad: number;
+
   @Field({ nullable: true })
   descripcion?: string;
 
