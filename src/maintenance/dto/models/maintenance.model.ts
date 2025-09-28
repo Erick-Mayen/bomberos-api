@@ -36,6 +36,6 @@ export class VehicleMaintenance {
     @Field(() => Date)
     fecha_creacion: Date;
 
-    @Field(() => Vehicle)
-    Unidad: Vehicle;
+    @Field(() => Vehicle, { nullable: true })
+    unidad?: Vehicle | null;
 }

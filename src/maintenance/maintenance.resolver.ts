@@ -22,6 +22,12 @@ export class VehicleMaintenanceResolver {
     return this.maintenanceService.findOne(id);
   }
 
+  @Query(() => [VehicleMaintenance])
+  @UseGuards(GqlAuthGuard)
+  findMaintenanceByVehicleId(@Args('id_unidad', { type: () => Int }) id_unidad: number) {
+    return this.maintenanceService.findByVehicleId(id_unidad);
+  }
+
   @Mutation(() => VehicleMaintenance)
   @UseGuards(GqlAuthGuard)
   createMaintenance(

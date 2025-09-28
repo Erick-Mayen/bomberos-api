@@ -77,6 +77,21 @@ type Vehicle {
   usuario_creacion: Int
 }
 
+type VehicleMaintenance {
+  id_mantenimiento: Int!
+  id_unidad: Int!
+  fecha_mantenimiento: DateTime!
+  descripcion: String
+  taller: String
+  kilometraje: Int
+  costo: Float
+  proximo_mantenimiento: Int
+  activo: Boolean!
+  usuario_creacion: Int
+  fecha_creacion: DateTime!
+  unidad: Vehicle
+}
+
 type Query {
   findAllUsers: [User!]!
   findOneUser(id: Int!): User!
@@ -88,6 +103,9 @@ type Query {
   findOneVehicle(id: Int!): Vehicle!
   findAllVehicleTypes: [VehicleType!]!
   findAllVehicleStates: [VehicleState!]!
+  findAllMaintenance: [VehicleMaintenance!]!
+  findOneMaintenance(id: Int!): VehicleMaintenance!
+  findMaintenanceByVehicleId(id_unidad: Int!): [VehicleMaintenance!]!
 }
 
 type Mutation {
@@ -102,6 +120,9 @@ type Mutation {
   createVehicle(createVehicleInput: CreateVehicleInput!): Vehicle!
   updateVehicle(updateVehicleInput: UpdateVehicleInput!): Vehicle!
   removeVehicle(id: Int!): Vehicle!
+  createMaintenance(createVehicleMaintenanceInput: CreateVehicleMaintenanceInput!): VehicleMaintenance!
+  updateMaintenance(updateVehicleMaintenanceInput: UpdateVehicleMaintenanceInput!): VehicleMaintenance!
+  removeMaintenance(id: Int!): VehicleMaintenance!
 }
 
 input LoginInput {
@@ -173,5 +194,29 @@ input UpdateVehicleInput {
   kilometraje: Int
   usuario_creacion: Int
   id_unidad: Int!
+  activo: Boolean
+}
+
+input CreateVehicleMaintenanceInput {
+  id_unidad: Int!
+  fecha_mantenimiento: DateTime!
+  descripcion: String
+  taller: String
+  kilometraje: Int
+  costo: Float
+  proximo_mantenimiento: Int
+  usuario_creacion: Int
+}
+
+input UpdateVehicleMaintenanceInput {
+  id_unidad: Int
+  fecha_mantenimiento: DateTime
+  descripcion: String
+  taller: String
+  kilometraje: Int
+  costo: Float
+  proximo_mantenimiento: Int
+  usuario_creacion: Int
+  id_mantenimiento: Int!
   activo: Boolean
 }
