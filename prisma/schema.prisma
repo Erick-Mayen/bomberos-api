@@ -90,14 +90,35 @@ model usuario {
   id_rol               Int
   activo               Boolean                @default(true)
   validar              Boolean                @default(true)
-  fecha_creacion       DateTime               @default(now()) @db.Timestamp(6)
-  fecha_actualizacion  DateTime               @default(now()) @db.Timestamp(6)
+  fecha_creacion       DateTime               @default(now()) @db.Timestamptz(6)
+  fecha_actualizacion  DateTime               @default(now()) @db.Timestamptz(6)
   usuario_creacion     Int?
   mantenimiento_unidad mantenimiento_unidad[]
   personalCreado       personal[]             @relation("personalCreadoPorUsuario")
+  turno                turno[]
   unidad               unidad[]
   usuario              usuario?               @relation("usuarioTousuario", fields: [usuario_creacion], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario_creacion")
   other_usuario        usuario[]              @relation("usuarioTousuario")
   personalAsignado     personal?              @relation("usuarioAsignado", fields: [id_personal], references: [id_personal], onDelete: NoAction, onUpdate: NoAction, map: "usuario_ibfk_1")
   rol                  rol                    @relation(fields: [id_rol], references: [id_rol], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model turno {
+  id_turno            Int       @id @default(autoincrement())
+  nombre_turno        String    @db.VarChar(100)
+  tipo_turno          String    @db.VarChar(10)
+  hora_inicio         String    @db.VarChar(15)
+  dias_semana         Int[]
+  fecha_inicio_ciclo  DateTime  @db.Date
+  fecha_fin_ciclo     DateTime? @db.Date
+  personal_asignado   Int[]
+  activo              Boolean   @default(true)
+  observaciones       String?
+  es_rotativo         Boolean   @default(false)
+  orden_rotacion      Int?      @default(0)
+  semanas_rotacion    Int?      @default(1)
+  usuario_creacion    Int?
+  fecha_creacion      DateTime  @default(now()) @db.Timestamptz(6)
+  fecha_actualizacion DateTime  @default(now()) @db.Timestamptz(6)
+  usuario             usuario?  @relation(fields: [usuario_creacion], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction)
 }

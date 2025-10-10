@@ -92,6 +92,25 @@ type VehicleMaintenance {
   unidad: Vehicle
 }
 
+type StaffShifts {
+  id_turno: Int!
+  nombre_turno: String!
+  tipo_turno: String!
+  hora_inicio: String!
+  dias_semana: [Int!]!
+  personal_asignado: [Int!]!
+  fecha_inicio_ciclo: DateTime!
+  fecha_fin_ciclo: DateTime
+  activo: Boolean!
+  observaciones: String
+  es_rotativo: Boolean!
+  orden_rotacion: Int!
+  semanas_rotacion: Int!
+  usuario_creacion: Int
+  fecha_creacion: DateTime!
+  fecha_actualizacion: DateTime!
+}
+
 type Query {
   findAllUsers: [User!]!
   findOneUser(id: Int!): User!
@@ -106,6 +125,8 @@ type Query {
   findAllMaintenance: [VehicleMaintenance!]!
   findOneMaintenance(id: Int!): VehicleMaintenance!
   findMaintenanceByVehicleId(id_unidad: Int!): [VehicleMaintenance!]!
+  findAllShifts: [StaffShifts!]!
+  findOneShift(id: Int!): StaffShifts!
 }
 
 type Mutation {
@@ -123,6 +144,9 @@ type Mutation {
   createMaintenance(createVehicleMaintenanceInput: CreateVehicleMaintenanceInput!): VehicleMaintenance!
   updateMaintenance(updateVehicleMaintenanceInput: UpdateVehicleMaintenanceInput!): VehicleMaintenance!
   removeMaintenance(id: Int!): VehicleMaintenance!
+  createShift(createStaffShiftsInput: StaffShiftsInput!): StaffShifts!
+  updateShift(updateStaffShiftsInput: UpdateStaffShiftsInput!): StaffShifts!
+  removeShift(id: Int!): StaffShifts!
 }
 
 input LoginInput {
@@ -219,4 +243,35 @@ input UpdateVehicleMaintenanceInput {
   usuario_creacion: Int
   id_mantenimiento: Int!
   activo: Boolean
+}
+
+input StaffShiftsInput {
+  nombre_turno: String!
+  tipo_turno: String!
+  hora_inicio: String!
+  dias_semana: [Int!]!
+  personal_asignado: [Int!]!
+  fecha_inicio_ciclo: DateTime!
+  fecha_fin_ciclo: DateTime
+  observaciones: String
+  es_rotativo: Boolean! = false
+  orden_rotacion: Int! = 0
+  semanas_rotacion: Int! = 1
+  usuario_creacion: Int
+}
+
+input UpdateStaffShiftsInput {
+  id_turno: Int!
+  nombre_turno: String!
+  tipo_turno: String!
+  hora_inicio: String!
+  dias_semana: [Int!]!
+  personal_asignado: [Int!]!
+  fecha_inicio_ciclo: DateTime!
+  fecha_fin_ciclo: DateTime
+  observaciones: String
+  es_rotativo: Boolean! = false
+  orden_rotacion: Int! = 0
+  semanas_rotacion: Int! = 1
+  usuario_creacion: Int
 }
